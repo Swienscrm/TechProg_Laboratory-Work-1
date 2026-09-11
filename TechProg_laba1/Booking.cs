@@ -11,7 +11,8 @@ namespace TechProg_laba1
     {
         private Room room;
         private Client client;
-        private DateTime checkIn;
+        private DateTime checkInDate;
+        private DateTime checkOutDate;
         private bool earlyBooking;
         private BookingStatus status;
         public decimal totalCost;
@@ -27,18 +28,52 @@ namespace TechProg_laba1
 
         public Client Client
         {
-            get { return  client; }
+            get { return client; }
             set { client = value; }
         }
 
-        private DateTime CheckIn
+        public DateTime CheckInDate
         {
-            get { return  checkIn; }
+            get { return checkInDate; }
             set
             {
-                if 
+                if (value.Date == default || value.Date == DateTime.MinValue)
+                {
+                    throw new ArgumentException("Ошибка: указан неверный формат даты");
+                }
+                if (value.Date < DateTime.Today)
+                {
+                    throw new ArgumentException("Ошибка: дата не может быть указана задним числом");
+                }
+                if (value.Date >= checkOutDate)
+                {
+                    throw new ArgumentException("Ошибка: дата выезда не может быть раньше чем дата заезда");
+                }
+                checkInDate = value;
             }
         }
+
+        public DateTime CheckOutDate
+        {
+            get { return checkOutDate; }
+            set
+            {
+                if (value.Date == default || value.Date == DateTime.MinValue)
+                {
+                    throw new ArgumentException("Ошибка: указан неверный формат даты");
+                }
+                if (value.Date < DateTime.Today)
+                {
+                    throw new ArgumentException("Ошибка: дата не может быть указана задним числом");
+                }
+                if (value.Date <= checkInDate)
+                {
+                    throw new ArgumentException("Ошибка: дата выезда не может быть раньше чем дата заезда");
+                }
+                checkOutDate = value;
+            }
+        }
+
 
     }
 }

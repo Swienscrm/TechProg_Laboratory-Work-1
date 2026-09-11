@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Booking.cs" />
+    <Compile Include="BookingStatus.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Hotel.cs" />
     <Compile Include="Program.cs" />

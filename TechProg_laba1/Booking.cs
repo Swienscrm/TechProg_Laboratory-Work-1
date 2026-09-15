@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace TechProg_laba1
 {
@@ -16,14 +13,12 @@ namespace TechProg_laba1
         private int guestCount;
         private BookingStatus status;
         private decimal totalCost;
+        private int earlyBookingDaysTreshold = 30;
 
         public Room Room
         {
             get { return room; }
-            private set
-            {
-                room = value;
-            }
+            private set { room = value; }
         }
 
         public Client Client
@@ -41,6 +36,7 @@ namespace TechProg_laba1
                 {
                     throw new ArgumentException("Ошибка: дата не может быть указана задним числом");
                 }
+
                 checkInDate = value;
             }
         }
@@ -54,10 +50,12 @@ namespace TechProg_laba1
                 {
                     throw new ArgumentException("Ошибка: дата не может быть указана задним числом");
                 }
+
                 if (value.Date <= checkInDate)
                 {
                     throw new ArgumentException("Ошибка: дата выезда не может быть раньше чем дата заезда");
                 }
+
                 checkOutDate = value;
             }
         }
@@ -71,6 +69,7 @@ namespace TechProg_laba1
                 {
                     throw new ArgumentException("Ошибка: неверное кол-во гостей");
                 }
+
                 guestCount = value;
             }
         }
@@ -91,10 +90,12 @@ namespace TechProg_laba1
             {
                 throw new ArgumentException("Ошибка: номер не может быть null");
             }
+
             if (client == null)
             {
                 throw new ArgumentException("Ошибка: клиент не может быть null");
             }
+
             Room = room;
             Client = client;
             CheckInDate = checkInDate;
@@ -110,11 +111,13 @@ namespace TechProg_laba1
                 status = newStatus;
                 return true;
             }
+
             if ((status == BookingStatus.Created) && (newStatus == BookingStatus.Cancelled))
             {
                 status = newStatus;
                 return true;
             }
+
             if ((status == BookingStatus.CheckedIn) && (newStatus == BookingStatus.CheckedOut))
             {
                 status = newStatus;
@@ -126,12 +129,64 @@ namespace TechProg_laba1
                 return false;
             }
         }
-        
+
         public int GetNightCount()
         {
             int nightCount = (CheckOutDate - CheckInDate).Days;
             return nightCount;
         }
 
+        public bool IsEarlyBooking()
+        {
+            int earlyBookingDays = (CheckInDate - DateTime.Today).Days;
+            if (earlyBookingDays > earlyBookingDaysTreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public decimal CalculateCost()
+        {
+            if (Room.Hotel == null)
+            {
+                throw new ArgumentException("Ошибка: номер еще не привязан к гостинице");
+            }
+
+            decimal cost = GetNightCount() * Room.RoomType.PricePerNight;
+
+            if (IsEarlyBooking())
+            {
+                cost = cost * 0.9m;
+            }
+
+            if (Room.Hotel.Star >= 4)
+            {
+                cost = cost * 1.15m;
+            }
+
+            if (Room.Hotel.Seasonal)
+            {
+                cost = cost * 1.25m;
+            }
+
+            int extraGuest = GuestCount - Room.RoomType.Capacity;
+            if (extraGuest > 0)
+            {
+                cost = cost * (1m + 0.2m * extraGuest);
+            }
+
+            if (Client.IsLoyaltyMember)
+            {
+                cost = cost * 0.95m;
+            }
+
+            totalCost = cost;
+            return totalCost;
+        }
+        
+        
+        
     }
 }

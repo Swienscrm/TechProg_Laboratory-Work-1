@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TechProg_laba1
 {
@@ -22,6 +20,7 @@ namespace TechProg_laba1
                 {
                     throw new ArgumentException("Ошибка: номер комнаты не может быть пустым");
                 }
+
                 roomNumber = value;
             }
         }
@@ -29,11 +28,7 @@ namespace TechProg_laba1
         public Hotel Hotel
         {
             get { return hotel; }
-            private set
-            {
-
-                hotel = value;
-            }
+            private set { hotel = value; }
         }
 
         public RoomType RoomType
@@ -45,6 +40,7 @@ namespace TechProg_laba1
                 {
                     throw new ArgumentException("Ошибка: объект RoomType - не может быть null");
                 }
+
                 roomType = value;
             }
         }
@@ -67,12 +63,13 @@ namespace TechProg_laba1
             if (hotel == null)
             {
                 throw new ArgumentException("Гостиница не может быть null");
-
             }
+
             if (this.hotel != null)
             {
                 throw new ArgumentException("Гостиница уже назначена");
             }
+
             Hotel = hotel;
         }
     }

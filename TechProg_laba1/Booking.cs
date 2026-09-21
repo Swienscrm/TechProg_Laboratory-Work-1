@@ -185,8 +185,5 @@ namespace TechProg_laba1
             totalCost = cost;
             return totalCost;
         }
-        
-        
-        
     }
 }

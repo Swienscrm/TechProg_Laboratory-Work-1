@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace TechProg_laba1
@@ -14,7 +13,8 @@ namespace TechProg_laba1
             if (args.Length != 4)
             {
                 Console.WriteLine("Ошибка: неверное количество входных элементов");
-                Console.WriteLine("Использование: <файл гостиницы> <файл типов номеров> <файл номеров> <файл журнала бронирований>");
+                Console.WriteLine(
+                    "Использование: <файл гостиницы> <файл типов номеров> <файл номеров> <файл журнала бронирований>");
                 return;
             }
 
@@ -33,6 +33,7 @@ namespace TechProg_laba1
                 Console.WriteLine($"Ошибка при чтении файла гостиницы: {ex.Message}");
                 return;
             }
+
             List<RoomType> roomTypes;
             try
             {
@@ -43,6 +44,7 @@ namespace TechProg_laba1
                 Console.WriteLine($"Ошибка при чтении файла типов номеров: {ex.Message}");
                 return;
             }
+
             List<Room> rooms;
             try
             {
@@ -50,7 +52,6 @@ namespace TechProg_laba1
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine($"Ошибка при чтении файла номеров: {ex.Message}");
                 return;
             }
@@ -60,7 +61,7 @@ namespace TechProg_laba1
             {
                 Console.WriteLine();
                 Console.WriteLine("1. Оформить бронирование");
-                Console.WriteLine("2. Добавить номер в гостиницу");
+                Console.WriteLine("2. (Админ панель) Добавить номер в гостиницу");
                 Console.WriteLine("3. Изменить статус бронирования");
                 Console.WriteLine("4. Показать список бронирований");
                 Console.WriteLine("5. Выход");
@@ -98,6 +99,7 @@ namespace TechProg_laba1
                 }
             }
         }
+
         static Hotel ReadHotel(string filePath)
         {
             string[] lines = File.ReadAllLines(filePath);
@@ -161,7 +163,7 @@ namespace TechProg_laba1
 
         static List<Room> ReadRoom(string filePath, List<RoomType> roomTypes, Hotel hotel)
         {
-            string[] lines = File.ReadAllLines(filePath);
+            string[] lines = File.ReadAllLines(filePath);//сделать через стримврайтер че то такое чтобы освобождать памяьб
             List<Room> rooms = new List<Room>();
             foreach (string line in lines)
             {
@@ -177,6 +179,7 @@ namespace TechProg_laba1
                     {
                         throw new ArgumentException("Ошибка: неверное колличество полей в строке");
                     }
+
                     RoomType foundType = null;
                     foreach (RoomType rt in roomTypes)
                     {
@@ -186,6 +189,7 @@ namespace TechProg_laba1
                             break;
                         }
                     }
+
                     if (foundType == null)
                     {
                         throw new ArgumentException("Ошибка: тип номера неизвестен для программы");
@@ -201,10 +205,10 @@ namespace TechProg_laba1
                 }
                 catch (Exception ex)
                 {
-
                     Console.WriteLine($"Ошибка: строка '{line}': {ex.Message}");
                 }
             }
+
             return rooms;
         }
 
@@ -217,10 +221,12 @@ namespace TechProg_laba1
             {
                 if (!room.IsOccupied)
                 {
-                    Console.WriteLine($"Номер: {room.RoomNumber}, тип: {room.RoomType.Name}, цена за сутки: {room.RoomType.PricePerNight:F2}, вместимость: {room.RoomType.Capacity}");
+                    Console.WriteLine(
+                        $"Номер: {room.RoomNumber}, тип: {room.RoomType.Name}, цена за сутки: {room.RoomType.PricePerNight:F2}, вместимость: {room.RoomType.Capacity}");
                     hasAvalibleRooms = true;
                 }
             }
+
             if (hasAvalibleRooms == false)
             {
                 Console.WriteLine("Нет свободных номеров");
@@ -279,8 +285,8 @@ namespace TechProg_laba1
             selectedRoom.IsOccupied = true;
             bookings.Add(booking);
 
-            string confirmation = "=== ПОДТВЕРЖДЕНИЕ БРОНИРОВАНИЯ ===" + Environment.NewLine
-                                  + BuildBookingText(booking, bookings.Count);
+            string confirmation = "-ПОДТВЕРЖДЕНИЕ БРОНИРОВАНИЯ-" + Environment.NewLine
+                                                                 + BuildBookingText(booking, bookings.Count);
             Console.WriteLine();
             Console.WriteLine(confirmation);
             WriteToLog(bookingLogFilePath, confirmation);
@@ -323,7 +329,6 @@ namespace TechProg_laba1
 
                 try
                 {
-
                     return new Booking(room, client, checkInDate, checkOutDate, guestCount);
                 }
                 catch (ArgumentException ex)
@@ -352,7 +357,8 @@ namespace TechProg_laba1
             Console.WriteLine("Типы номеров:");
             for (int i = 0; i < roomTypes.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {roomTypes[i].Name}, цена за сутки: {roomTypes[i].PricePerNight:F2}, вместимость: {roomTypes[i].Capacity}");
+                Console.WriteLine(
+                    $"{i + 1}. {roomTypes[i].Name}, цена за сутки: {roomTypes[i].PricePerNight:F2}, вместимость: {roomTypes[i].Capacity}");
             }
 
             int typeNumber = ReadInt("Выберите тип номера: ");
@@ -381,7 +387,8 @@ namespace TechProg_laba1
                 return;
             }
 
-            string message = $"Номер {room.RoomNumber} (тип «{room.RoomType.Name}») добавлен в гостиницу «{hotel.Name}»";
+            string message =
+                $"Номер {room.RoomNumber} (тип «{room.RoomType.Name}») добавлен в гостиницу «{hotel.Name}»";
             Console.WriteLine(message);
             WriteToLog(bookingLogFilePath, message);
         }
@@ -443,11 +450,13 @@ namespace TechProg_laba1
                 booking.Room.IsOccupied = false;
             }
 
-            string message = $"Бронирование №{number}: статус изменён «{StatusToText(oldStatus)}» -> «{StatusToText(newStatus)}»";
+            string message =
+                $"Бронирование №{number}: статус изменён «{StatusToText(oldStatus)}» -> «{StatusToText(newStatus)}»";
             if (!booking.Room.IsOccupied)
             {
                 message += $". Номер {booking.Room.RoomNumber} освобождён";
             }
+
             Console.WriteLine(message);
             WriteToLog(bookingLogFilePath, message);
         }
@@ -477,6 +486,7 @@ namespace TechProg_laba1
                     return room;
                 }
             }
+
             return null;
         }
 
@@ -538,6 +548,7 @@ namespace TechProg_laba1
                 Console.WriteLine("Ввод завершён. Работа программы остановлена.");
                 Environment.Exit(0);
             }
+
             return line.Trim();
         }
 
@@ -547,11 +558,14 @@ namespace TechProg_laba1
             {
                 Console.Write(prompt);
                 DateTime date;
-                if (DateTime.TryParseExact(ReadLine(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+                if (DateTime.TryParseExact(ReadLine(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None,
+                        out date))
                 {
                     return date;
                 }
-                Console.WriteLine($"Ошибка: дата должна быть в формате гггг-мм-дд, например {DateTime.Today:yyyy-MM-dd}");
+
+                Console.WriteLine(
+                    $"Ошибка: дата должна быть в формате гггг-мм-дд, например {DateTime.Today:yyyy-MM-dd}");
             }
         }
 
@@ -565,6 +579,7 @@ namespace TechProg_laba1
                 {
                     return value;
                 }
+
                 Console.WriteLine("Ошибка: нужно ввести целое число");
             }
         }
@@ -575,14 +590,16 @@ namespace TechProg_laba1
             {
                 Console.Write($"{prompt} (да/нет): ");
                 string answer = ReadLine().ToLower();
-                if (answer == "да" || answer == "д")
+                if (answer == "да" || answer == "д" || answer == "yes" || answer == "y" )
                 {
                     return true;
                 }
-                if (answer == "нет" || answer == "н")
+
+                if (answer == "нет" || answer == "н" || answer == "no" || answer == "n" )
                 {
                     return false;
                 }
+
                 Console.WriteLine("Ошибка: ответьте «да» или «нет»");
             }
         }
